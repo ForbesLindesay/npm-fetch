@@ -1,0 +1,21 @@
+{
+  "name": "npm-fetch",
+  "version": "0.0.0",
+  "description": "Fetch an npm module as a tarball",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ForbesLindesay/npm-fetch.git"
+  },
+  "license": "BSD",
+  "dependencies": {
+    "semver": "~1.1.4",
+    "mkdirp": "~0.3.5",
+    "sha": "~1.0.1",
+    "read-package-json": "~0.4.1",
+    "tar-pack": "~1.0.0",
+    "fetch-file": "~1.0.1"
+  }
+}
