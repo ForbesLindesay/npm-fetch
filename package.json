@@ -16,6 +16,7 @@
     "sha": "~1.0.1",
     "read-package-json": "~0.4.1",
     "tar-pack": "~1.0.0",
-    "fetch-file": "~1.0.1"
+    "fetch-file": "~1.0.1",
+    "fstream-npm": "~0.1.4"
   }
 }
