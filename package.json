@@ -21,6 +21,6 @@
   },
   "devDependencies": {
     "mocha": "~1.9",
-    "rimraf": ""
+    "rimraf": "2.1.4"
   }
 }
