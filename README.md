@@ -2,6 +2,9 @@
 
 Fetch npm modules.  This is a work in progress.
 
+[![Build Status](https://travis-ci.org/ForbesLindesay/npm-fetch.png?branch=master)](https://travis-ci.org/ForbesLindesay/npm-fetch)
+[![Dependency Status](https://gemnasium.com/ForbesLindesay/npm-fetch.png)](https://gemnasium.com/ForbesLindesay/npm-fetch)
+
 ## Usage
 
 ```js
