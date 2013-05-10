@@ -1,4 +1,5 @@
 var fs = require('fs')
+var http = require('http')
 
 var assert = require('assert')
 var downloadRemoteTarball = require('../lib/tarball.js')
@@ -17,18 +18,14 @@ afterEach(function (done) {
 
 describe('tarball', function () {
   describe('downloadRemoteTarball', function () {
-
     it('returns an error if the checked sha-sum does not match', function (done) {
-      var server = require('http')
-        .createServer(function (req, res) {
+      var server = http.createServer(function (req, res) {
           res.statusCode = 200
           var readStream = fs.createReadStream(src)
-          readStream.on('readable', function () {
-            readStream.pipe(res)
-          })
           readStream.on('end', function () {
             server.close()
           })
+          readStream.pipe(res)
         })
         .listen(1337, function () {
           downloadRemoteTarball('http://localhost:1337/npm-fetch-master.tar.gz',
@@ -38,18 +35,14 @@ describe('tarball', function () {
           })
         })
     })
-
     it('downloads files and calls a callback', function (done) {
-      var server = require('http')
-        .createServer(function (req, res) {
+      var server = http.createServer(function (req, res) {
           res.statusCode = 200
           var readStream = fs.createReadStream(src)
-          readStream.on('readable', function () {
-            readStream.pipe(res)
-          })
           readStream.on('end', function () {
             server.close()
           })
+          readStream.pipe(res)
         })
         .listen(1337, function () {
           downloadRemoteTarball('http://localhost:1337/npm-fetch-master.tar.gz',
@@ -61,20 +54,38 @@ describe('tarball', function () {
           })
         })
     })
-
-    // TODO
-    // after 2 tries valid answer
-    // no valid answer at all
-    it('retries if a http 500 status code was given back', function (done) {
-      require('http')
-        .createServer(function (req, res) {
-          res.statusCode = 500
-          res.end('Awful error!')
+    it('retries if a http 500 status code was given back and succeeds if it then works', function (done) {
+      var times = 0
+      var server = http.createServer(function (req, res) {
+          times++
+          if (times < 3) {
+            res.statusCode = 500
+            return res.end('Awful error!')
+          }
+          var readStream = fs.createReadStream(src)
+          readStream.on('end', function () {
+            server.close()
+          })
+          readStream.pipe(res)
         })
         .listen(1337, function () {
           downloadRemoteTarball('http://localhost:1337/npm-fetch-master.tar.gz',
-            dest, {retries: 3}, function (err) {
-            done(err)
+            dest, {retries: 4}, function (err) {
+              done(err)
+          })
+        })
+    })
+    it('retries if a http 500 status code was given back and succeeds if it then works', function (done) {
+      var server = http.createServer(function (req, res) {
+            res.statusCode = 500
+            res.end('Awful error!')
+        })
+        .listen(1337, function () {
+          downloadRemoteTarball('http://localhost:1337/npm-fetch-master.tar.gz',
+            dest, {retries: 1}, function (err) {
+              assert.ok(err)
+              server.close()
+              done()
           })
         })
     })
