@@ -20,6 +20,7 @@
     "fstream-npm": "~0.1.4"
   },
   "devDependencies": {
-    "mocha": "~1.9"
+    "mocha": "~1.9",
+    "rimraf": ""
   }
 }
