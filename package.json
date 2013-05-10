@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "description": "Fetch an npm module as a tarball",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha -R spec"
   },
   "repository": {
     "type": "git",
@@ -16,6 +16,11 @@
     "sha": "~1.0.1",
     "read-package-json": "~0.4.1",
     "tar-pack": "~1.0.0",
-    "fetch-file": "~1.0.1"
+    "fetch-file": "~1.0.1",
+    "fstream-npm": "~0.1.4"
+  },
+  "devDependencies": {
+    "mocha": "~1.9",
+    "rimraf": ""
   }
 }
