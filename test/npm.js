@@ -47,13 +47,8 @@ describe('npm', function () {
         })
         .listen(1337, function () {
           npm.version('underscore', '1.3.3', dest, {
-                registry: client
-              , config: {
-                  get: function(arg) {
-                    if (arg === 'registry') return fakeRegistry
-                    return false
-                  }
-                }
+              registryClient: client,
+              registry: fakeRegistry
             }, function (err) {
               fs.exists(dest, function (exists) {
                 assert.ok(exists)
@@ -72,13 +67,8 @@ describe('npm', function () {
         })
         .listen(1337, function () {
           npm.version('underscore', '1.3.3', dest, {
-                registry: client
-              , config: {
-                  get: function(arg) {
-                    if (arg === 'registry') return fakeRegistry
-                    return false
-                  }
-                }
+              registryClient: client,
+              registry: fakeRegistry
             }, function (err) {
               assert.ok(err)
               assert.ok(/shasum/.test(err.message))
@@ -95,13 +85,8 @@ describe('npm', function () {
         })
         .listen(1337, function () {
           npm.version('underscore', '1.3.3', dest, {
-                registry: client
-              , config: {
-                  get: function(arg) {
-                    if (arg === 'registry') return null
-                    return false
-                  }
-                }
+              registryClient: client,
+              registry: fakeRegistry
             }, function (err) {
               assert.ok(err)
               done()
