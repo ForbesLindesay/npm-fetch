@@ -21,6 +21,8 @@
   },
   "devDependencies": {
     "mocha": "~1.9",
-    "rimraf": "2.1.4"
+    "rimraf": "2.1.4",
+    "npmconf": "*",
+    "npm-registry-client": "*"
   }
 }
