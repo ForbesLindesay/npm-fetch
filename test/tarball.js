@@ -9,15 +9,15 @@ var server = require('./fixtures/testserver.js')
 var createServer = server.createServer
 
 var dest = __dirname + '/output/foo.tar.gz'
-var src = __dirname + '/fixtures/npm-fetch-master.tar.gz';
+var src = __dirname + '/fixtures/npm-fetch-master.tar.gz'
 
 var remoteTarball = server.host + ':' + server.port + '/npm-fetch-master.tar.gz'
 
 beforeEach(function (done) {
-  rimraf(__dirname + '/output', done);
+  rimraf(__dirname + '/output', done)
 })
 afterEach(function (done) {
-  rimraf(__dirname + '/output', done);
+  rimraf(__dirname + '/output', done)
 })
 
 

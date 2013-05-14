@@ -8,10 +8,10 @@ var dest = __dirname + '/output/foo.tar.gz'
 
 
 beforeEach(function (done) {
-  rimraf(__dirname + '/output', done);
+  rimraf(__dirname + '/output', done)
 })
 afterEach(function (done) {
-  rimraf(__dirname + '/output', done);
+  rimraf(__dirname + '/output', done)
 })
 
 describe('github', function () {
