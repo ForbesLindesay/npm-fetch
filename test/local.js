@@ -7,10 +7,10 @@ var tarball = __dirname + '/output/foo.tar.gz'
 
 
 beforeEach(function (done) {
-  rimraf(__dirname + '/output', done);
+  rimraf(__dirname + '/output', done)
 })
 afterEach(function (done) {
-  rimraf(__dirname + '/output', done);
+  rimraf(__dirname + '/output', done)
 })
 
 describe('local', function () {
@@ -25,7 +25,7 @@ describe('local', function () {
       var input = __dirname + '/fixtures/package-json-version-missing'
       local.dir(input, tarball, {}, function (err) {
         assert.ok(err)
-        assert.ok(/version/.test(err.message));
+        assert.ok(/version/.test(err.message))
         done()
       })
     })
@@ -33,7 +33,7 @@ describe('local', function () {
       var input = __dirname + '/fixtures/package-json-name-missing'
       local.dir(input, tarball, {}, function (err) {
         assert.ok(err)
-        assert.ok(/name/.test(err.message));
+        assert.ok(/name/.test(err.message))
         done()
       })
     })
