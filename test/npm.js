@@ -1,9 +1,11 @@
 var assert = require('assert')
 var npm = require('../lib/npm')
 var rimraf = require('rimraf')
-var http = require('http')
 var fs = require('fs')
 var RegClient = require('npm-registry-client')
+
+var server = require('./fixtures/testserver.js')
+var createServer = server.createServer
 
 var fakeRegistryPort = 1337
 var fakeRegistry = 'http://localhost:' + fakeRegistryPort
@@ -32,7 +34,7 @@ afterEach(function (done) {
 describe('npm', function () {
   describe('npm.version', function () {
     it('downloads underscore 1.3.3', function (done) {
-      var server = http.createServer(function (req, res) {
+      var s = createServer(function (req, res) {
           res.statusCode = 200
           // first request
           if (req.url !== '/underscore/-/' + versionedTarball) {
@@ -41,11 +43,10 @@ describe('npm', function () {
           // send tarball
           var readStream = fs.createReadStream(tarballSource)
           readStream.on('end', function () {
-            server.close()
+            s.close()
           })
           readStream.pipe(res)
-        })
-        .listen(1337, function () {
+      }, function listen () {
           npm.version('underscore', '1.3.3', dest, {
               registryClient: client,
               registry: fakeRegistry
@@ -55,17 +56,16 @@ describe('npm', function () {
                 done()
               })
           })
-        })
+      })
     })
     it('returns an error if no shasum is defined', function (done) {
-      var server = http.createServer(function (req, res) {
+      var s = createServer(function (req, res) {
           res.statusCode = 200
           // first request but the package has no shasum
           underscore.dist.shasum = null
           res.end(JSON.stringify(underscore))
-          server.close()
-        })
-        .listen(1337, function () {
+          s.close()
+      }, function listen () {
           npm.version('underscore', '1.3.3', dest, {
               registryClient: client,
               registry: fakeRegistry
@@ -74,16 +74,15 @@ describe('npm', function () {
               assert.ok(/shasum/.test(err.message))
               done()
           })
-        })
+      })
     })
     it('returns an error if no registry setting was provided', function (done) {
-      var server = http.createServer(function (req, res) {
+      var s = createServer(function (req, res) {
           res.statusCode = 200
           // first request
           res.end(JSON.stringify(underscore))
-          server.close()
-        })
-        .listen(1337, function () {
+          s.close()
+      }, function listen () {
           npm.version('underscore', '1.3.3', dest, {
               registryClient: client,
               registry: fakeRegistry
@@ -91,7 +90,7 @@ describe('npm', function () {
               assert.ok(err)
               done()
           })
-        })
+      })
     })
   })
 })
