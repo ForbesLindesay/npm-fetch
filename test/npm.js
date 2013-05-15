@@ -32,6 +32,59 @@ afterEach(function (done) {
 })
 
 describe('npm', function () {
+  describe('npm.tag', function () {
+    it('returns an error if the engine does not match', function (done) {
+      var underscoreTag = require('./fixtures/underscore-res-tag.json')
+      underscoreTag.versions['1.3.3'].engines.node = 'Rockobert'
+      var s = createServer(function (req, res) {
+        res.statusCode = 200
+        return res.end(JSON.stringify(underscoreTag))
+      }, function listen () {
+        npm.tag('underscore', '1.3.3', dest, {
+            registryClient: client,
+            registry: fakeRegistry
+          }, function (err) {
+            s.close()
+            assert.ok(err)
+            done()
+        })
+      })
+    })
+    it('downloads a tarball with npm.version if dist-tags was found', function (done) {
+      var underscoreTag = require('./fixtures/underscore-res-tag.json')
+      underscoreTag['dist-tags'] = {
+        "1.0.0": "1.0.0",
+        "1.3.3": "1.3.3",
+        "5.0.0": "5.0.0"
+      }
+      var s = createServer(function (req, res) {
+        res.statusCode = 200
+        if (req.url === '/underscore/-/' + versionedTarball) {
+          // third request: send tarball
+          var readStream = fs.createReadStream(tarballSource)
+          readStream.on('end', function () {
+            s.close()
+          })
+          readStream.pipe(res)
+        } else if (req.url === '/underscore/1.3.3') {
+          // second request
+          return res.end(JSON.stringify(underscore))
+        } else {
+          // first request
+          return res.end(JSON.stringify(underscoreTag))
+        }
+      }, function listen () {
+        npm.tag('underscore', '1.3.3', dest, {
+            registryClient: client,
+            registry: fakeRegistry,
+            force: true
+          }, function (err) {
+            assert.ok(fs.existsSync(dest))
+            done()
+        })
+      })
+    })
+  })
   describe('npm.version', function () {
     it('downloads underscore 1.3.3', function (done) {
       var s = createServer(function (req, res) {
@@ -51,10 +104,8 @@ describe('npm', function () {
               registryClient: client,
               registry: fakeRegistry
             }, function (err) {
-              fs.exists(dest, function (exists) {
-                assert.ok(exists)
-                done()
-              })
+              assert.ok(fs.existsSync(dest))
+              done()
           })
       })
     })
