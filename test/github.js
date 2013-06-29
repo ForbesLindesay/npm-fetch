@@ -23,7 +23,7 @@ describe('github', function () {
   })
   // external
   it('downloads archives from github', function (done) {
-    downloadGithubTarball('ForbesLindesay/npm-fetch', dest, {}, function (err) {
+    downloadGithubTarball('ForbesLindesay/npm-fetch#master', dest, {}, function (err) {
       fs.exists(dest, function (exists) {
         assert.ok(exists)
         done()
