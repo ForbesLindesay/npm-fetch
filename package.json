@@ -17,7 +17,8 @@
     "read-package-json": "~1.1.0",
     "tar-pack": "~2.0.0",
     "fetch-file": "~1.0.1",
-    "fstream-npm": "~0.1.4"
+    "fstream-npm": "~0.1.4",
+    "discern": "~1.1.0"
   },
   "devDependencies": {
     "mocha": "~1.9",
