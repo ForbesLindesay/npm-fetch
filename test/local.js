@@ -2,9 +2,8 @@ var assert = require('assert')
 var local = require('../lib/local.js')
 var rimraf = require('rimraf')
 var sha = require('sha')
-
+var fs = require('fs')
 var tarball = __dirname + '/output/foo.tar.gz'
-
 
 beforeEach(function (done) {
   rimraf(__dirname + '/output', done)
@@ -38,19 +37,35 @@ describe('local', function () {
       })
     })
   })
+  var input = __dirname + '/fixtures/npm-fetch-master.tar.gz'
   describe('local.file', function () {
-    it('calls a callback', function (done) {
-      var input = __dirname + '/fixtures/npm-fetch-master.tar.gz'
-      local.file(input, tarball, {}, function (err) {
-        if (err) return done(err)
-        sha.get(input, function (err, hash) {
-          if (err) return done(err)
-          sha.check(tarball, hash, function (err) {
-            if (err) return done(err)
-            else done()
-          })
+    it('it emits a close event', function (done) {
+      local.file(input, tarball, {})
+        .on('close', done)
+    })
+    it('it creates files', function (done) {
+      local.file(input, tarball, {})
+        .pipe(fs.createWriteStream(tarball))
+        .on('close', function () {
+          assert.ok(fs.existsSync(tarball))
+          done()
         })
+    })
+    it('it works with the sha stream', function (done) {
+      sha.get(input, function (err, hash) {
+        local.file(input, tarball, {})
+          .pipe(sha.stream(hash))
+          .pipe(fs.createWriteStream(tarball))
+            .on('close', done)
       })
+    })
+    it('it emits errors with the sha stream and a wrong hash', function (done) {
+      local.file(input, tarball, {})
+        .pipe(sha.stream("wrong hash"))
+          .on('error', function() {
+            done()
+          })
+        .pipe(fs.createWriteStream(tarball))
     })
   })
 })
