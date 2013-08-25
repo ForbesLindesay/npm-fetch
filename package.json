@@ -12,15 +12,17 @@
   "license": "BSD",
   "dependencies": {
     "semver": "~2.0.7",
-    "mkdirp": "~0.3.5",
-    "sha": "~1.0.1",
+    "sha": "~1.1.0",
     "read-package-json": "~1.1.0",
     "tar-pack": "~2.0.0",
     "fetch-file": "~1.0.1",
-    "fstream-npm": "~0.1.4"
+    "fstream-npm": "~0.1.4",
+    "hyperquest": "~0.1.6",
+    "barrage": "~1.0.0"
   },
   "devDependencies": {
     "mocha": "~1.9",
+    "mkdirp": "~0.3.5",
     "rimraf": "2.1.4",
     "npmconf": "*",
     "npm-registry-client": "*"

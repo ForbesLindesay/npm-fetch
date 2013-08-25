@@ -1,9 +1,13 @@
+'use strict'
+
 var assert = require('assert')
-var npm = require('../lib/npm')
-var rimraf = require('rimraf')
 var fs = require('fs')
+
+var barrage = require('barrage')
 var RegClient = require('npm-registry-client')
 
+require('./setup.js')
+var npm = require('../lib/npm')
 var server = require('./fixtures/testserver.js')
 var createServer = server.createServer
 
@@ -15,21 +19,27 @@ var versionedTarball = 'underscore-1.3.3.tgz'
 var tarballSource = __dirname + '/fixtures/' + versionedTarball
 
 var client = new RegClient({
-    cache: __dirname + '/output'
-  , registry: fakeRegistry})
+  cache: __dirname + '/output',
+  registry: fakeRegistry,
+  log: {
+    error: noop,
+    warn: noop,
+    info: noop,
+    verbose: noop,
+    silly: noop,
+    http: noop,
+    pause: noop,
+    resume: noop
+  }
+})
+function noop() {
+
+}
 
 // mock json response from the registry
 // will get a reference patched to our mocked registry
 var underscore = require('./fixtures/underscore-res-version.json')
 underscore.dist.tarball = fakeRegistry + '/underscore/-/' + versionedTarball
-
-
-beforeEach(function (done) {
-  rimraf(__dirname + '/output', done)
-})
-afterEach(function (done) {
-  rimraf(__dirname + '/output', done)
-})
 
 describe('npm', function () {
   describe('npm.tag', function () {
@@ -40,10 +50,11 @@ describe('npm', function () {
         res.statusCode = 200
         return res.end(JSON.stringify(underscoreTag))
       }, function listen () {
-        npm.tag('underscore', '1.3.3', dest, {
-            registryClient: client,
-            registry: fakeRegistry
-          }, function (err) {
+        npm.tag('underscore', '1.3.3', {
+          registryClient: client,
+          registry: fakeRegistry
+        })
+        .on('error', function (err) {
             s.close()
             assert.ok(err)
             done()
@@ -74,13 +85,15 @@ describe('npm', function () {
           return res.end(JSON.stringify(underscoreTag))
         }
       }, function listen () {
-        npm.tag('underscore', '1.3.3', dest, {
-            registryClient: client,
-            registry: fakeRegistry,
-            force: true
-          }, function (err) {
-            assert.ok(fs.existsSync(dest))
-            done()
+        npm.tag('underscore', '1.3.3', {
+          registryClient: client,
+          registry: fakeRegistry,
+          force: true
+        })
+        .syphon(barrage(fs.createWriteStream(dest)))
+        .wait(function (err) {
+          assert.ok(fs.existsSync(dest))
+          done()
         })
       })
     })
@@ -100,46 +113,34 @@ describe('npm', function () {
           })
           readStream.pipe(res)
       }, function listen () {
-          npm.version('underscore', '1.3.3', dest, {
-              registryClient: client,
-              registry: fakeRegistry
-            }, function (err) {
-              assert.ok(fs.existsSync(dest))
-              done()
-          })
+        npm.version('underscore', '1.3.3', {
+          registryClient: client,
+          registry: fakeRegistry
+        })
+        .syphon(barrage(fs.createWriteStream(dest)))
+        .wait(function (err) {
+          assert.ok(fs.existsSync(dest))
+          done()
+        })
       })
     })
     it('returns an error if no shasum is defined', function (done) {
       var s = createServer(function (req, res) {
           res.statusCode = 200
           // first request but the package has no shasum
-          underscore.dist.shasum = null
-          res.end(JSON.stringify(underscore))
+          var u = JSON.parse(JSON.stringify(underscore))
+          u.dist.shasum = null
+          res.end(JSON.stringify(u))
           s.close()
       }, function listen () {
-          npm.version('underscore', '1.3.3', dest, {
-              registryClient: client,
-              registry: fakeRegistry
-            }, function (err) {
-              assert.ok(err)
-              assert.ok(/shasum/.test(err.message))
-              done()
+          npm.version('underscore', '1.3.3', {
+            registryClient: client,
+            registry: fakeRegistry
           })
-      })
-    })
-    it('returns an error if no registry setting was provided', function (done) {
-      var s = createServer(function (req, res) {
-          res.statusCode = 200
-          // first request
-          res.end(JSON.stringify(underscore))
-          s.close()
-      }, function listen () {
-          npm.version('underscore', '1.3.3', dest, {
-              registryClient: client,
-              registry: fakeRegistry
-            }, function (err) {
-              assert.ok(err)
-              done()
+          .on('error', function (err) {
+            assert.ok(err)
+            assert.ok(/shasum/.test(err.message))
+            done()
           })
       })
     })

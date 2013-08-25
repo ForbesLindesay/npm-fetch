@@ -1,6 +1,6 @@
 # npm-fetch
 
-Fetch npm modules.  This is a work in progress.
+Fetch npm modules.  **This is a work in progress.**
 
 [![Build Status](https://travis-ci.org/ForbesLindesay/npm-fetch.png?branch=master)](https://travis-ci.org/ForbesLindesay/npm-fetch)
 [![Dependency Status](https://gemnasium.com/ForbesLindesay/npm-fetch.png)](https://gemnasium.com/ForbesLindesay/npm-fetch)
@@ -17,57 +17,55 @@ fetch('npm-fetch@0.0.1', __dirname + '/npm-fetch.tgz', function (err) {
 
 ## API
 
-### fetch(pkg, dest, options, cb)
+### fetch(name, spec, dest, options, cb)
+
+**UNSTABLE**
 
 Fetch the package as a tarball to destination using the appropriate method.
 
-pkg must be one of:
+ - `name` the name of the package as a string
+ - `spec` a string which can be:
+   - a version, version range or tag if the module is in the npm repository
+   - a url with `https` or `http` as the scheme, where the module is hosted somewhere as a tarball
+   - a git url, where the module will be cloned as a git repository
+   - a GitHub specifier of the form `username/reponame#tag-name` where `#tag-name` is optional and defaults to `#master`
+   - a path to a local file or folder
+
+### npm.version(name, version, options)
+
+Download package at exact version and return a stream.
+
+### npm.range(name, versionRange, options)
+
+Not yet implemented
+
+### npm.tag(name, tag, options)
+
+Download the package `name` at `tag` and return a stream
+
+### github(name, 'user/repo#tag', options)
+
+Returns a stream for the GitHub repo as a tarball at the given tag (defaults to master)
+
+e.g.
 
 ```js
-'url'
-['url']
-['pkg', 'version']
-'pkg@version'
-['pkg@version']
-['pkg', 'url']
+fetch.github('npm-fetch', 'ForbesLindesay/npm-fetch', {})
+  .pipe(fs.createWriteStream('npm-fetch.tar.gz'))
 ```
 
-### npm(packageName, versionSpecifier, destination, options, callback)
+### git(name, url, options)
 
-Use the apropriate method to download `packageName` from the npm repository and save the resulting tarball to `destination`.
+Not yet implemented
 
-### npm.version(packageName, version, destination, options, callback)
+### tarball(name, url, options)
 
-Download package at exact version to destination.
+Get a stream for a tarball (handling redirects and retries).
 
-### npm.range(packageName, versionRange, destination, options, callback)
+### local.dir(name, path, options)
 
-Download the best match for that version range.
+Package up the directory at path and return a stream for the tarball.
 
-### npm.tag(packageName, tag, destination, options, callback)
+### local.file(name, path, options)
 
-Download the package `packageName` at `tag`.
-
-### github(user/repo#tag, destination, options, callback)
-
-Download the GitHub repo as a tarball to `destination`.
-
-### git(url, destination, options, callback)
-
-Use git to clone the repo at URL and package it into a tarball at `destination`.
-
-### tarball(url, destination, options, callback)
-
-Download the tarball from `url` to `destination`.
-
-### local(path, destination, options, callback)
-
-Tar and copy the local file or path to destination
-
-### local.dir(path, destination, options, callback)
-
-Package up the directory at path and copy the resulting tarball to destination
-
-### local.file(path, destination, options, callback)
-
-Copy the file at path to destination
+Just create a read stream for `path`

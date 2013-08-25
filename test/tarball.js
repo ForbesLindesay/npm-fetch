@@ -1,10 +1,12 @@
+'use strict'
+
 var fs = require('fs')
-var http = require('http')
-
 var assert = require('assert')
-var downloadRemoteTarball = require('../lib/tarball.js')
-var rimraf = require('rimraf')
 
+var barrage = require('barrage')
+
+require('./setup')
+var downloadRemoteTarball = require('../lib/tarball.js')
 var server = require('./fixtures/testserver.js')
 var createServer = server.createServer
 
@@ -12,14 +14,6 @@ var dest = __dirname + '/output/foo.tar.gz'
 var src = __dirname + '/fixtures/npm-fetch-master.tar.gz'
 
 var remoteTarball = server.host + ':' + server.port + '/npm-fetch-master.tar.gz'
-
-beforeEach(function (done) {
-  rimraf(__dirname + '/output', done)
-})
-afterEach(function (done) {
-  rimraf(__dirname + '/output', done)
-})
-
 
 describe('tarball', function () {
   describe('downloadRemoteTarball', function () {
@@ -32,11 +26,12 @@ describe('tarball', function () {
         })
         readStream.pipe(res)
       }, function listen () {
-        downloadRemoteTarball(remoteTarball,
-          dest, {shasum: '1'}, function (err) {
-          assert.ok(err)
-          done()
-        })
+        downloadRemoteTarball('name', remoteTarball, {shasum: '1'})
+          .on('error', function (err) {
+            assert.ok(err)
+            done()
+          })
+          .pipe(fs.createWriteStream(dest))
       })
     })
     it('downloads files and calls a callback', function (done) {
@@ -48,13 +43,15 @@ describe('tarball', function () {
         })
         readStream.pipe(res)
       }, function listen () {
-        downloadRemoteTarball(remoteTarball,
-          dest, {}, function (err, res) {
-          fs.exists(dest, function (exists) {
-            assert.ok(exists)
-            done()
+        downloadRemoteTarball('name', remoteTarball)
+          .syphon(barrage(fs.createWriteStream(dest)))
+          .wait(function (err) {
+            if (err) return done(err)
+            fs.exists(dest, function (exists) {
+              assert.ok(exists)
+              done()
+            })
           })
-        })
       })
     })
     it('retries if a http 500 status code was given back and succeeds if it then works', function (done) {
@@ -71,10 +68,9 @@ describe('tarball', function () {
         })
         readStream.pipe(res)
       }, function listen () {
-        downloadRemoteTarball(remoteTarball,
-          dest, {retries: 4}, function (err) {
-            done(err)
-        })
+        downloadRemoteTarball('name', remoteTarball, {retries: 4})
+          .syphon(barrage(fs.createWriteStream(dest)))
+          .wait(done)
       })
     })
     it('retries if a http 500 status code was given back and succeeds if it then works', function (done) {
@@ -82,12 +78,12 @@ describe('tarball', function () {
         res.statusCode = 500
         res.end('Awful error!')
       }, function listen () {
-        downloadRemoteTarball(remoteTarball,
-          dest, {retries: 1}, function (err) {
+        downloadRemoteTarball('name', remoteTarball, {retries: 1})
+          .on('error', function (err) {
             assert.ok(err)
             s.close()
             done()
-        })
+          })
       })
     })
   })

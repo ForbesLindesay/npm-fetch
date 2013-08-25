@@ -1,29 +1,28 @@
+'use strict'
+
 var assert = require('assert')
-var local = require('../lib/local.js')
-var rimraf = require('rimraf')
+var fs = require('fs')
+
+var barrage = require('barrage')
 var sha = require('sha')
+
+require('./setup')
+var local = require('../lib/local.js')
 
 var tarball = __dirname + '/output/foo.tar.gz'
 
-
-beforeEach(function (done) {
-  rimraf(__dirname + '/output', done)
-})
-afterEach(function (done) {
-  rimraf(__dirname + '/output', done)
-})
-
 describe('local', function () {
   describe('local.dir', function () {
-    it('it calls a callback', function (done) {
+    it('it returns a stream for a tarball', function (done) {
       var input = __dirname + '/fixtures/npm-user-validate'
-      local.dir(input, tarball, {}, function () {
-        done()
-      })
+      local.dir('name', input, {})
+        .syphon(barrage(fs.createWriteStream(tarball)))
+        .wait(done)
     })
     it('returns an error if package.json is missing a version', function (done) {
       var input = __dirname + '/fixtures/package-json-version-missing'
-      local.dir(input, tarball, {}, function (err) {
+      local.dir('name', input, {})
+      .on('error', function (err) {
         assert.ok(err)
         assert.ok(/version/.test(err.message))
         done()
@@ -31,7 +30,8 @@ describe('local', function () {
     })
     it('returns an error if package.json is missing a name', function (done) {
       var input = __dirname + '/fixtures/package-json-name-missing'
-      local.dir(input, tarball, {}, function (err) {
+      local.dir('name', input, {})
+      .on('error', function (err) {
         assert.ok(err)
         assert.ok(/name/.test(err.message))
         done()
@@ -39,9 +39,11 @@ describe('local', function () {
     })
   })
   describe('local.file', function () {
-    it('calls a callback', function (done) {
+    it('returns a stream for a tarball', function (done) {
       var input = __dirname + '/fixtures/npm-fetch-master.tar.gz'
-      local.file(input, tarball, {}, function (err) {
+      local.file('name', input, {})
+      .syphon(barrage(fs.createWriteStream(tarball)))
+      .wait(function (err) {
         if (err) return done(err)
         sha.get(input, function (err, hash) {
           if (err) return done(err)
