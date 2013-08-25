@@ -145,4 +145,70 @@ describe('npm', function () {
       })
     })
   })
+  describe('npm.range', function () {
+    it('downloads underscore ~1.3.3 when thats the latest', function (done) {
+      var s = createServer(function (req, res) {
+          res.statusCode = 200
+          // first request
+          if (req.url === '/underscore') {
+            return res.end(JSON.stringify({
+              'dist-tags': {'latest': '1.3.3'},
+              'versions' : {'1.3.3' : {}}
+            }))
+          }
+          //second request
+          if (req.url !== '/underscore/-/' + versionedTarball) {
+            return res.end(JSON.stringify(underscore))
+          }
+          // send tarball
+          var readStream = fs.createReadStream(tarballSource)
+          readStream.on('end', function () {
+            s.close()
+          })
+          readStream.pipe(res)
+      }, function listen () {
+        npm.range('underscore', '~1.3.3', {
+          registryClient: client,
+          registry: fakeRegistry
+        })
+        .syphon(barrage(fs.createWriteStream(dest)))
+        .wait(function (err) {
+          assert.ok(fs.existsSync(dest))
+          done()
+        })
+      })
+    })
+    it('downloads underscore ~1.3.3 even when that isnt the latest', function (done) {
+      var s = createServer(function (req, res) {
+          res.statusCode = 200
+          // first request
+          if (req.url === '/underscore') {
+            return res.end(JSON.stringify({
+              'dist-tags': {'latest': '1.5.0'},
+              'versions' : {'1.3.3' : {}, '1.5.0' : {}}
+            }))
+          }
+          //second request
+          if (req.url !== '/underscore/-/' + versionedTarball) {
+            return res.end(JSON.stringify(underscore))
+          }
+          // send tarball
+          var readStream = fs.createReadStream(tarballSource)
+          readStream.on('end', function () {
+            s.close()
+          })
+          readStream.pipe(res)
+      }, function listen () {
+        npm.range('underscore', '~1.3.3', {
+          registryClient: client,
+          registry: fakeRegistry
+        })
+        .syphon(barrage(fs.createWriteStream(dest)))
+        .wait(function (err) {
+          assert.ok(fs.existsSync(dest))
+          done()
+        })
+      })
+    })
+  })
 })
