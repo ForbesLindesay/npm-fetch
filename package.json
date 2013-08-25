@@ -18,7 +18,8 @@
     "fetch-file": "~1.0.1",
     "fstream-npm": "~0.1.4",
     "hyperquest": "~0.1.6",
-    "barrage": "~1.0.0"
+    "barrage": "~1.0.0",
+    "discern": "~1.1.0"
   },
   "devDependencies": {
     "mocha": "~1.9",
