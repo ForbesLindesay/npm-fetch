@@ -25,11 +25,11 @@ exports.git = require('./lib/git')
 // that just a single argument.
 
 function fetch(name, spec, options) {
-  if (typeof version === 'object' && options === undefined) {
-    options = version
-    version = undefined
+  if (typeof spec === 'object' && options === undefined) {
+    options = spec
+    spec = undefined
   }
-  version = version || '*'
+  spec = spec || '*'
 
   var p = url.parse(spec) || {}
 
