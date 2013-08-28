@@ -1,6 +1,6 @@
 {
   "name": "npm-fetch",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Fetch an npm module as a tarball",
   "scripts": {
     "test": "mocha -R spec"
