@@ -26,6 +26,8 @@
     "mocha": "~1.9",
     "mkdirp": "~0.3.5",
     "rimraf": "2.1.4",
-    "npmconf": "*"
+    "npmconf": "*",
+    "npm-registry-mock": "*",
+    "strong-caching-http-client": "git+https://github.com/strongloop/strong-caching-http-client.git"
   }
 }
