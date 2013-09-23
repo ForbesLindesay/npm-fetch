@@ -88,3 +88,27 @@ describe('tarball', function () {
     })
   })
 })
+
+// new testsetup
+
+var mr = require('npm-registry-mock')
+var strongClient = require('strong-caching-http-client')
+// config
+var port = 1331
+var address = 'http://localhost:' + port
+
+var tb = address + '/underscore/-/underscore-1.3.3.tgz'
+
+it('is able to use other http-clients, e.g. the strong-caching-http-client', function (done) {
+  mr(port, function (s) {
+    downloadRemoteTarball('name', tb, {httpClient: strongClient.request, cache: __dirname + '/output/', method: 'GET'})
+      .syphon(barrage(fs.createWriteStream(dest)))
+      .wait(function (err) {
+        if (err) return done(err)
+        fs.exists(dest, function (exists) {
+          assert.ok(exists)
+          done()
+        })
+      })
+  })
+})
