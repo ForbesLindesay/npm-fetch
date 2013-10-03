@@ -37,7 +37,7 @@ Download package at exact version and return a stream.
 
 ### npm.range(name, versionRange, options)
 
-Not yet implemented
+Download the max satisfying version of a package
 
 ### npm.tag(name, tag, options)
 
