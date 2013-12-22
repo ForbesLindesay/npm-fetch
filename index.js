@@ -36,7 +36,7 @@ function fetch(name, spec, options) {
   switch (p.protocol) {
     case 'http:':
     case 'https:':
-      return exports.tarball(spec, options)
+      return exports.tarball(name, spec, options)
     case "git:":
     case "git+http:":
     case "git+https:":
