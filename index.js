@@ -46,15 +46,15 @@ function fetch(name, spec, options) {
       return exports.git(spec, options)
     default:
       var result = new PassThrough()
-      fs.stat(spec, function (err, spec) {
-        if (err === null && spec.isDirectory()) {
+      fs.stat(spec, function (err, stat) {
+        if (err === null && stat.isDirectory()) {
           exports.local.dir(spec, options)
             .syphon(result)
-        } else if (err === null && spec.isFile()) {
+        } else if (err === null && stat.isFile()) {
           exports.local.file(spec, options)
             .syphon(result)
-        } else if (/^([^\/]+)\/([^\/]+)(?:#(.+))?$/.test(spec)) {
-          exports.github(spec, options)
+        } else if (/^([^\/]+)\/([^\/#]+)(?:#(.+))?$/.test(spec)) {
+          exports.github(name, spec, options)
             .syphon(result)
         } else {
           exports.npm(name, spec, options)
