@@ -7,7 +7,7 @@ var barrage = require('barrage')
 var RegClient = require('npm-registry-client')
 
 require('./setup.js')
-var npm = require('../lib/npm')
+var npm = require('../')
 var server = require('./fixtures/testserver.js')
 var createServer = server.createServer
 
@@ -50,7 +50,7 @@ describe('npm', function () {
         res.statusCode = 200
         return res.end(JSON.stringify(underscoreTag))
       }, function listen () {
-        npm.tag('underscore', '1.3.3', {
+        npm('underscore', 'latest', {
           registryClient: client,
           registry: fakeRegistry
         })
@@ -64,9 +64,7 @@ describe('npm', function () {
     it('downloads a tarball with npm.version if dist-tags was found', function (done) {
       var underscoreTag = require('./fixtures/underscore-res-tag.json')
       underscoreTag['dist-tags'] = {
-        "1.0.0": "1.0.0",
-        "1.3.3": "1.3.3",
-        "5.0.0": "5.0.0"
+        "latest": "1.3.3"
       }
       var s = createServer(function (req, res) {
         res.statusCode = 200
@@ -85,7 +83,7 @@ describe('npm', function () {
           return res.end(JSON.stringify(underscoreTag))
         }
       }, function listen () {
-        npm.tag('underscore', '1.3.3', {
+        npm('underscore', 'latest', {
           registryClient: client,
           registry: fakeRegistry,
           force: true
@@ -113,7 +111,7 @@ describe('npm', function () {
           })
           readStream.pipe(res)
       }, function listen () {
-        npm.version('underscore', '1.3.3', {
+        npm('underscore', '1.3.3', {
           registryClient: client,
           registry: fakeRegistry
         })
@@ -133,7 +131,7 @@ describe('npm', function () {
           res.end(JSON.stringify(u))
           s.close()
       }, function listen () {
-          npm.version('underscore', '1.3.3', {
+          npm('underscore', '1.3.3', {
             registryClient: client,
             registry: fakeRegistry
           })
@@ -167,7 +165,7 @@ describe('npm', function () {
           })
           readStream.pipe(res)
       }, function listen () {
-        npm.range('underscore', '~1.3.3', {
+        npm('underscore', '~1.3.3', {
           registryClient: client,
           registry: fakeRegistry
         })
@@ -199,7 +197,7 @@ describe('npm', function () {
           })
           readStream.pipe(res)
       }, function listen () {
-        npm.range('underscore', '~1.3.3', {
+        npm('underscore', '~1.3.3', {
           registryClient: client,
           registry: fakeRegistry
         })

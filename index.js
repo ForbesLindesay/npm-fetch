@@ -43,21 +43,25 @@ function fetch(name, spec, options) {
     case "git+rsync:":
     case "git+ftp:":
     case "git+ssh:":
-      return exports.git(spec, options)
+      return exports.git(name, spec, options)
     default:
       var result = new PassThrough()
       fs.stat(spec, function (err, stat) {
         if (err === null && stat.isDirectory()) {
-          exports.local.dir(spec, options)
+          exports.local.dir(name, spec, options)
+            .on('end', result.end.bind(result))
             .syphon(result)
         } else if (err === null && stat.isFile()) {
-          exports.local.file(spec, options)
+          exports.local.file(name, spec, options)
+            .on('end', result.end.bind(result))
             .syphon(result)
         } else if (/^([^\/]+)\/([^\/#]+)(?:#(.+))?$/.test(spec)) {
           exports.github(name, spec, options)
+            .on('end', result.end.bind(result))
             .syphon(result)
         } else {
           exports.npm(name, spec, options)
+            .on('end', result.end.bind(result))
             .syphon(result)
         }
       })
