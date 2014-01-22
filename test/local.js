@@ -7,7 +7,7 @@ var barrage = require('barrage')
 var sha = require('sha')
 
 require('./setup')
-var local = require('../lib/local.js')
+var npm = require('../')
 
 var tarball = __dirname + '/output/foo.tar.gz'
 
@@ -15,13 +15,13 @@ describe('local', function () {
   describe('local.dir', function () {
     it('it returns a stream for a tarball', function (done) {
       var input = __dirname + '/fixtures/npm-user-validate'
-      local.dir('name', input, {})
+      npm('name', input, {})
         .syphon(barrage(fs.createWriteStream(tarball)))
         .wait(done)
     })
     it('returns an error if package.json is missing a version', function (done) {
       var input = __dirname + '/fixtures/package-json-version-missing'
-      local.dir('name', input, {})
+      npm('name', input, {})
       .on('error', function (err) {
         assert.ok(err)
         assert.ok(/version/.test(err.message))
@@ -30,7 +30,7 @@ describe('local', function () {
     })
     it('returns an error if package.json is missing a name', function (done) {
       var input = __dirname + '/fixtures/package-json-name-missing'
-      local.dir('name', input, {})
+      npm('name', input, {})
       .on('error', function (err) {
         assert.ok(err)
         assert.ok(/name/.test(err.message))
@@ -41,7 +41,7 @@ describe('local', function () {
   describe('local.file', function () {
     it('returns a stream for a tarball', function (done) {
       var input = __dirname + '/fixtures/npm-fetch-master.tar.gz'
-      local.file('name', input, {})
+      npm('name', input, {})
       .syphon(barrage(fs.createWriteStream(tarball)))
       .wait(function (err) {
         if (err) return done(err)
