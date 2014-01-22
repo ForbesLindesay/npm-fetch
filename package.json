@@ -11,16 +11,16 @@
   },
   "license": "BSD",
   "dependencies": {
-    "semver": "~2.1.0",
+    "semver": "~2.2.1",
     "sha": "~1.2.3",
     "read-package-json": "~1.1.0",
     "tar-pack": "~2.0.0",
     "fetch-file": "~1.0.1",
     "fstream-npm": "~0.1.4",
-    "hyperquest": "~0.1.8",
+    "hyperquest": "~0.2.0",
     "barrage": "~1.0.0",
     "discern": "~1.1.0",
-    "npm-registry-client": "~0.2.28"
+    "npm-registry-client": "~0.3.3"
   },
   "devDependencies": {
     "mocha": "~1.9",
