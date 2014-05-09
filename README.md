@@ -69,3 +69,7 @@ Package up the directory at path and return a stream for the tarball.
 ### local.file(name, path, options)
 
 Just create a read stream for `path`
+
+## License
+
+BSD
