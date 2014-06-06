@@ -21,11 +21,12 @@
     "barrage": "~1.0.0",
     "discern": "~1.1.0",
     "npm-registry-client": "~0.3.3",
-    "mkdirp": "^0.5.0",
-    "rimraf": "^2.2.8"
+    "temp": "^0.8.0"
   },
   "devDependencies": {
     "mocha": "~1.9",
+    "mkdirp": "^0.5.0",
+    "rimraf": "^2.2.8",
     "npmconf": "*",
     "npm-registry-mock": "*",
     "strong-caching-http-client": "git+https://github.com/strongloop/strong-caching-http-client.git"
