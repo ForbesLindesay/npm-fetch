@@ -3,8 +3,8 @@
 Fetch npm modules.  **This is a work in progress.**
 
 [![Build Status](https://img.shields.io/travis/ForbesLindesay/npm-fetch/master.svg)](https://travis-ci.org/ForbesLindesay/npm-fetch)
-[![Dependency Status](https://img.shields.io/gemnasium/ForbesLindesay/npm-fetch.svg)](https://gemnasium.com/ForbesLindesay/npm-fetch)
-[![NPM version](https://img.shields.io/npm/v/npm-fetch.svg)](http://badge.fury.io/js/npm-fetch)
+[![Dependency Status](https://img.shields.io/david/ForbesLindesay/npm-fetch.svg)](https://david-dm.org/ForbesLindesay/npm-fetch)
+[![NPM version](https://img.shields.io/npm/v/npm-fetch.svg)](https://www.npmjs.com/package/npm-fetch)
 
 ## Usage
 
