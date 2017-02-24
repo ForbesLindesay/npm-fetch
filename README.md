@@ -1,5 +1,7 @@
 # npm-fetch
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/ForbesLindesay/npm-fetch.svg)](https://greenkeeper.io/)
+
 Fetch npm modules.  **This is a work in progress.**
 
 [![Build Status](https://img.shields.io/travis/ForbesLindesay/npm-fetch/master.svg)](https://travis-ci.org/ForbesLindesay/npm-fetch)
